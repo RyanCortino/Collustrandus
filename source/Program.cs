@@ -4,9 +4,16 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using System;
 using System.IO;
+using Discord.WebSocket;
+using System.Threading.Tasks;
+using System.Threading;
 
 class Program
 {
+    /// <summary>
+    /// This method is our primary entry point. Here we build up our config, logger, and dependency injection systems. 
+    /// </summary>
+    /// <param name="args"></param>
     static void Main(string[] args)
     {
         // Setting up configuartion for Serilog
@@ -24,12 +31,17 @@ class Program
             .ConfigureServices((context, services) =>
             {
                 // Services go here
-                services.AddTransient<ICustomService, GameService>();
+                services.AddSingleton<GameService>();
+                services.AddSingleton<DiscordBotService>();
+                services.AddSingleton<DiscordSocketClient>();
             })
             .UseSerilog()
             .Build();
 
-        var gameSvc = host.Services.GetRequiredService<GameService>();
+        ICustomService discordBotSvc = host.Services.GetRequiredService<DiscordBotService>();
+        ICustomService gameSvc = host.Services.GetRequiredService<GameService>();
+
+        discordBotSvc.Run();
         gameSvc.Run();
     }
 

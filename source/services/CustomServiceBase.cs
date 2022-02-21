@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 public abstract class CustomServiceBase : ICustomService
 {
